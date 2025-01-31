@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Global Styles */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px); /* Bounces up */
+    }
+}
+
+.animate-bounce {
+    animation: bounce 1s ease infinite; /* Adjust timing as needed */
+}
