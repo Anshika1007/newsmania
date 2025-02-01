@@ -40,6 +40,34 @@ const Categories = () => {
       setLoading(false);
     }
   };
+  const handleBookmark = async (article) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        alert("Please log in to save this for later.");
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:8080/api/bookmarks/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ newsId: article.title }), // Assuming title as the unique ID
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert("News Bookmarked! 📌");
+        } else {
+            alert(data.message);
+        }
+    } catch (err) {
+        alert("Something went wrong.");
+    }
+};
 
   useEffect(() => {
     fetchNews("general");
@@ -77,7 +105,7 @@ const Categories = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article, index) => (
-            <NewsCard key={index} article={article} onReadMore={() => window.open(article.url, "_blank")} />
+            <NewsCard key={index} article={article} onReadMore={() => window.open(article.url, "_blank")} onBookmark={handleBookmark} />
           ))}
         </div>
       )}
