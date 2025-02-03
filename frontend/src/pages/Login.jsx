@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Alert from "../components/Alert";
+import API_ENDPOINTS from "../api";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -12,7 +13,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:8080/api/auth/login", {
+      const res = await fetch(API_ENDPOINTS.LOGIN, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

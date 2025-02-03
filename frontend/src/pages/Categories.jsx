@@ -7,6 +7,7 @@ import { MdOutlineScience } from "react-icons/md";
 import { GiHealthNormal } from "react-icons/gi";
 import { GiPopcorn, GiBriefcase } from "react-icons/gi";
 import NewsCard from "../components/NewsCard";  // Import the NewsCard component
+import API_ENDPOINTS from "../api";
 
 const Categories = () => {
   const [articles, setArticles] = useState([]);
@@ -29,7 +30,8 @@ const Categories = () => {
     setError("");
     setSelectedCategory(category);
     try {
-      const response = await axios.get("http://localhost:8080/api/news", {
+     
+      const response = await axios.get(API_ENDPOINTS.NEWS, {
         params: { category },
       });
       setArticles(response.data);

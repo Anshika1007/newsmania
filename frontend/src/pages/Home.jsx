@@ -3,6 +3,7 @@ import axios from 'axios';
 import NewsCard from '../components/NewsCard'; // Import NewsCard component
 import { FaSpinner } from 'react-icons/fa'; // For the loading spinner icon
 import { FaNewspaper } from 'react-icons/fa';
+import API_ENDPOINTS from '../api';
 
 const Home = () => {
     const [news, setNews] = useState([]);
@@ -12,7 +13,7 @@ const Home = () => {
     const fetchNews = async () => {
         setLoading(true);
         try {
-            const response = await axios.get("http://localhost:8080/api/news");
+            const response = await axios.get(API_ENDPOINTS.NEWS);
             setNews(response.data.articles || response.data);
         } catch (error) {
             console.error('Error fetching news:', error);
