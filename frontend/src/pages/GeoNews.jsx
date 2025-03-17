@@ -7,6 +7,7 @@ import TempleHinduIcon from "@mui/icons-material/TempleHindu"; // Hindu Temple (
 import TowerIcon from "@mui/icons-material/Tour"; // Eiffel Tower (France)
 import BusinessIcon from "@mui/icons-material/Business"; // Brandenburg Gate (Germany)
 import {  FaNewspaper } from "react-icons/fa";
+import API_ENDPOINTS from "../api";
 const countryOptions = [
   { value: "in", label: "India", icon: <TempleHinduIcon /> },  
   { value: "us", label: "USA", icon: <FlagIcon /> },        
@@ -40,9 +41,7 @@ const GeoNews = () => {
   const fetchNews = async (selectedCountry) => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/news/${selectedCountry}`
-      );
+      const response = await axios.get(API_ENDPOINTS.NEWS_BY_COUNTRY(selectedCountry));
       setNews(response.data || []);
     } catch (error) {
       console.error("Error fetching news:", error);

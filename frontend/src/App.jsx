@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Categories from "./pages/Categories";
@@ -17,10 +17,22 @@ import ImpossibleQuiz from "./games/ImpossibleQuiz";
 //import ReactionSpeed from "./games/ReactionSpeed";
 
 const App = () => {
+  const location = useLocation();
+
+  // Check if the current page is a game page
+  const isGamePage = [
+    "/games",
+    "/game/fact-or-fake",
+    "/game/impossible-quiz",
+    // "/game/emoji-riddle",
+    // "/game/spot-the-difference",
+    // "/game/reaction-speed"
+  ].includes(location.pathname);
+
   return (
     <AuthProvider>
-      {/* Full-Screen Fix */}
-      <div className="flex h-screen w-screen bg-gray-900 overflow-hidden">
+      {/* Conditional overflow */}
+      <div className={`flex h-screen w-screen bg-gray-900 ${isGamePage ? "overflow-hidden" : "overflow-auto"}`}>
 
         {/* Sidebar Navbar (Fixed, Full Height) */}
         <div className="w-[260px] h-full bg-gray-800 shadow-lg fixed left-0 top-0">

@@ -1,9 +1,10 @@
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const API_ENDPOINTS = {
     NEWS: `${BASE_URL}/news`, 
     SIGNUP: `${BASE_URL}/auth/signup`,
     LOGIN: `${BASE_URL}/auth/login`,
+    NEWS_BY_COUNTRY: (country) => `${BASE_URL}/news/${country}`,
     
     // 📌 Bookmark Endpoints
     ADD_BOOKMARK: `${BASE_URL}/bookmarks/add`,
