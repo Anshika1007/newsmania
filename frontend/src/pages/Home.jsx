@@ -25,36 +25,45 @@ const Home = () => {
     // Handle bookmarking a news article
     const handleBookmark = async (article) => {
         const token = localStorage.getItem("token");
-
+    
         if (!token) {
             alert("Please log in to save this for later.");
             return;
         }
-        console.log("Article object:", article);
-        console.log("Article URL:", article.url); 
-
+    
+        console.log("Token from localStorage:", token); // Debugging
+    
         try {
-            const res = await fetch("http://localhost:8080/api/bookmarks/add", {
+            const response = await fetch("http://localhost:8080/api/bookmarks/add", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ url: article.url }), // Assuming title as the unique ID
+               body: JSON.stringify({
+                title: article.title,
+                url: article.url,
+                description: article.description,   // Ensure description is sent
+                urlToImage: article.urlToImage,     // Ensure image URL is sent
+                source: article.source?.name,        }),
             });
-
-            const data = await res.json();
-            if (res.ok) {
-                alert("News Bookmarked! 📌");
-            } else {
+    
+            const data = await response.json();
+            console.log("Response from server:", data); // Debugging
+    
+            if (!response.ok) {
                 console.log("Error Data:", data);
                 alert(data.message);
+                return;
             }
-        } catch (err) {
+    
+            alert("News Bookmarked! 📌");
+        } catch (error) {
             alert("Something went wrong.");
-            console.error("Error while bookmarking:", err); 
+            console.error("Error while bookmarking:", error);
         }
     };
+    
 
     useEffect(() => {
         fetchNews(); // Fetch news on component mount

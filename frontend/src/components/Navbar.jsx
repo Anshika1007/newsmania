@@ -1,218 +1,134 @@
-// import React, { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
-// import { GiHamburgerMenu } from "react-icons/gi";
-// import { FaSignInAlt, FaUserPlus, FaUserCircle } from "react-icons/fa";
-
-// const Navbar = () => {
-//   const [isMenuOpen, setIsMenuOpen] = useState(false);
-//   const [isLoggedIn, setIsLoggedIn] = useState(false); // Login state
-//   const [showUserMenu, setShowUserMenu] = useState(false);
-
-//   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-//   useEffect(() => {
-//     // Check login status using localStorage or other methods
-//     const token = localStorage.getItem("token");
-//     setIsLoggedIn(!!token);
-//   }, []);
-
-//   const handleLogout = () => {
-//     localStorage.removeItem("token"); // Remove token on logout
-//     setIsLoggedIn(false);
-//     setShowUserMenu(false);
-//   };
-
-//   return (
-//     <nav className="bg-black text-white shadow-lg sticky top-0 z-50">
-//       <div className="container mx-auto flex items-center justify-between p-4">
-//         {/* Logo */}
-//         <h1 className="text-2xl font-bold">NewsMania</h1>
-
-//         {/* Hamburger Menu */}
-//         <div className="md:hidden flex items-center ml-auto">
-//           {!isMenuOpen && (
-//             <button onClick={toggleMenu} className="text-2xl">
-//               <GiHamburgerMenu />
-//             </button>
-//           )}
-//         </div>
-
-//         {/* Navigation Links */}
-//         <ul
-//           className={`${
-//             isMenuOpen ? "block" : "hidden"
-//           } md:flex md:justify-center md:w-full flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 text-center`}
-//         >
-//           <li>
-//             <Link to="/" className="hover:underline" onClick={() => setIsMenuOpen(false)}>
-//               Home
-//             </Link>
-//           </li>
-//           <li>
-//             <Link
-//               to="/categories"
-//               className="hover:underline"
-//               onClick={() => setIsMenuOpen(false)}
-//             >
-//               Categories
-//             </Link>
-//           </li>
-//         </ul>
-
-//         {/* Right Section: Auth Links or User Icon */}
-//         <div className="relative">
-//           {isLoggedIn ? (
-//             <div
-//               className="cursor-pointer flex items-center space-x-2"
-//               onClick={() => setShowUserMenu(!showUserMenu)}
-//             >
-//               <FaUserCircle className="text-2xl" />
-//             </div>
-//           ) : (
-//             <div className="flex space-x-4">
-//               <Link
-//                 to="/login"
-//                 className="flex items-center space-x-1 hover:underline"
-//                 onClick={() => setIsMenuOpen(false)}
-//               >
-//                 <FaSignInAlt />
-//                 <span>Login</span>
-//               </Link>
-//               <Link
-//                 to="/signup"
-//                 className="flex items-center space-x-1 hover:underline"
-//                 onClick={() => setIsMenuOpen(false)}
-//               >
-//                 <FaUserPlus />
-//                 <span>Signup</span>
-//               </Link>
-//             </div>
-//           )}
-//           {/* User Menu Dropdown */}
-//           {showUserMenu && (
-//             <div className="absolute right-0 bg-white text-black rounded shadow-md mt-2">
-//               <ul className="py-2">
-//                 <li className="px-4 py-2 hover:bg-gray-200">
-//                   <Link to="/profile" onClick={() => setShowUserMenu(false)}>
-//                     Profile
-//                   </Link>
-//                 </li>
-//                 <li className="px-4 py-2 hover:bg-gray-200">
-//                   <button onClick={handleLogout}>Logout</button>
-//                 </li>
-//               </ul>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
-
-
 
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { FaSignInAlt, FaUserPlus, FaUserCircle } from "react-icons/fa";
+import { 
+  FaSignInAlt, FaUserPlus, FaUserCircle, FaSignOutAlt, 
+  FaBookmark, FaHome, FaThList, FaPoll ,FaGamepad
+} from "react-icons/fa";
+import { GiWorld } from "react-icons/gi";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Login state
-  const [showUserMenu, setShowUserMenu] = useState(false);
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check login status using localStorage or other methods
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem("token");
+      const storedUser = localStorage.getItem("username"); 
+      if (token && storedUser) {
+        setIsLoggedIn(true);
+        setUsername(storedUser);
+      } else {
+        setIsLoggedIn(false);
+        setUsername("");
+      }
+    };
+
+    checkLoginStatus();
+    window.addEventListener("storage", checkLoginStatus);
+
+    return () => {
+      window.removeEventListener("storage", checkLoginStatus);
+    };
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove token on logout
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
     setIsLoggedIn(false);
-    setShowUserMenu(false);
+    setUsername("");
+    navigate("/");
   };
 
   return (
-    <nav className="bg-black text-white shadow-lg sticky top-0 z-50">
-      <div className="container mx-auto flex items-center justify-between p-4">
-        {/* Logo */}
-        <h1 className="text-2xl font-bold">NewsMania</h1>
+    <>
+      {/* Hamburger Button for Mobile */}
+      <button
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        className="md:hidden fixed top-4 left-4 z-50 text-white bg-gray-800 p-3 rounded-full shadow-md transition-all"
+      >
+        <GiHamburgerMenu className="text-2xl" />
+      </button>
 
-        {/* Hamburger Menu */}
-        <div className="md:hidden flex items-center ml-auto">
-          {!isMenuOpen && (
-            <button onClick={toggleMenu} className="text-2xl">
-              <GiHamburgerMenu />
-            </button>
-          )}
-        </div>
+      {/* Sidebar Navigation */}
+      <aside
+        className={`fixed top-0 left-0 h-full bg-gray-900 text-white shadow-lg transform transition-transform ${
+          isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 w-64 md:w-72 p-5 flex flex-col space-y-6`}
+      >
+        {/* Logo */}
+        <h1 className="text-3xl font-bold text-white tracking-wide text-center">
+          News<span className="text-red-500">Mania</span>
+        </h1>
 
         {/* Navigation Links */}
-        <ul
-          className={`${
-            isMenuOpen ? "block" : "hidden"
-          } md:flex md:justify-center md:w-full flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 text-center`}
-        >
-          <li>
-            <Link to="/" className="hover:underline" onClick={() => setIsMenuOpen(false)}>
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link to="/categories" className="hover:underline" onClick={() => setIsMenuOpen(false)}>
-              Categories
-            </Link>
-          </li>
-          {/* Added Bookmarks Link */}
-          
+        <ul className="space-y-2">
+          <SidebarLink to="/" icon={<FaHome />} label="Home" setIsMenuOpen={setIsMenuOpen} />
+          <SidebarLink to="/categories" icon={<FaThList />} label="Categories" setIsMenuOpen={setIsMenuOpen} />
+          <SidebarLink to="/geo-news" icon={<GiWorld />}label="Location News" setIsMenuOpen={setIsMenuOpen} />
+          <SidebarLink to="/bookmarks" icon={<FaBookmark />} label="Bookmarks" setIsMenuOpen={setIsMenuOpen} />
+          <SidebarLink to="/polls" icon={<FaPoll />} label="Polls" setIsMenuOpen={setIsMenuOpen} />
+          <SidebarLink to="/games" icon={<FaGamepad />} label="Games" setIsMenuOpen={setIsMenuOpen} />
         </ul>
 
-        {/* Right Section: Auth Links or User Icon */}
-        <div className="relative">
+        {/* Authentication Section */}
+        <div className="mt-auto">
           {isLoggedIn ? (
-            <div
-              className="cursor-pointer flex items-center space-x-2"
-              onClick={() => setShowUserMenu(!showUserMenu)}
-            >
-              <FaUserCircle className="text-2xl" />
+            <div className="space-y-3">
+              {/* User Info */}
+              <div className="flex items-center space-x-3 bg-gray-800 p-3 rounded-lg">
+                <FaUserCircle className="text-3xl text-red-500" />
+                <span className="font-medium text-white">{username}</span>
+              </div>
+
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-500 text-white px-4 py-3 w-full rounded-lg transition duration-300 font-medium"
+              >
+                <FaSignOutAlt />
+                <span>Logout</span>
+              </button>
             </div>
           ) : (
-            <div className="flex space-x-4">
-              <Link to="/login" className="flex items-center space-x-1 hover:underline" onClick={() => setIsMenuOpen(false)}>
-                <FaSignInAlt />
-                <span>Login</span>
-              </Link>
-              <Link to="/signup" className="flex items-center space-x-1 hover:underline" onClick={() => setIsMenuOpen(false)}>
-                <FaUserPlus />
-                <span>Signup</span>
-              </Link>
-            </div>
-          )}
-          {/* User Menu Dropdown */}
-          {showUserMenu && (
-            <div className="absolute right-0 bg-white text-black rounded shadow-md mt-2">
-              <ul className="py-2">
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link to="/profile" onClick={() => setShowUserMenu(false)}>
-                    Profile
-                  </Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-200">
-                  <button onClick={handleLogout}>Logout</button>
-                </li>
-              </ul>
+            <div className="space-y-3">
+              <AuthButton to="/login" icon={<FaSignInAlt />} label="Login" color="blue" setIsMenuOpen={setIsMenuOpen} />
+              <AuthButton to="/signup" icon={<FaUserPlus />} label="Signup" color="green" setIsMenuOpen={setIsMenuOpen} />
             </div>
           )}
         </div>
-      </div>
-    </nav>
+      </aside>
+    </>
   );
 };
+
+/* Sidebar Link Component */
+const SidebarLink = ({ to, icon, label, setIsMenuOpen }) => (
+  <li>
+    <Link
+      to={to}
+      className="flex items-center space-x-3 p-3 rounded-lg transition duration-300 hover:bg-gray-800 text-white"
+      onClick={() => setIsMenuOpen(false)}
+    >
+      {typeof icon === "string" ? <span className="text-xl">{icon}</span> : <span className="text-lg">{icon}</span>}
+      <span className="font-medium">{label}</span>
+    </Link>
+  </li>
+);
+
+/* Auth Button Component */
+const AuthButton = ({ to, icon, label, color, setIsMenuOpen }) => (
+  <Link
+    to={to}
+    className={`flex items-center justify-center space-x-2 bg-${color}-600 hover:bg-${color}-500 text-white px-4 py-3 w-full rounded-lg transition duration-300 font-medium`}
+    onClick={() => setIsMenuOpen(false)}
+  >
+    {icon}
+    <span>{label}</span>
+  </Link>
+);
 
 export default Navbar;

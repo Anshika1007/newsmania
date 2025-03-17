@@ -1,60 +1,15 @@
-// const express = require("express");
-// const dotenv = require("dotenv");
-// const cors = require("cors");
-// const axios = require("axios");
-// const mongoose = require('mongoose');
-// const authRoutes = require("./routes/authRoutes");
-
-
-
-// dotenv.config();
-
-// const app = express();
-// app.use(express.json());
-
-// app.use(cors());
-
-
-
-
-// app.get("/api/news", async (req, res) => {
-//     const { category = "general", country = "us" } = req.query; // Default values if not provided
-//     try {
-//         const response = await axios.get("https://newsapi.org/v2/top-headlines", {
-//             params: {
-//                 apiKey: process.env.NEWS_API_KEY, // Use your NewsAPI key here
-//                 category,
-//                 country,
-//             },
-//         });
-
-//         res.status(200).json(response.data.articles); // Send only the articles array
-//     } catch (error) {
-//         console.error("Error fetching news:", error.message);
-//         res.status(500).json({ message: "Error fetching news", details: error.message });
-//     }
-// });
-// mongoose
-//   .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-//   .then(() => app.listen(process.env.PORT, () => console.log("MongoDB connected")))
-//   .catch((err) => console.log(err));
-
-
-// app.use("/api/auth", authRoutes);
-
-// const PORT = process.env.PORT || 8080;
-
-
-
-// app.listen(PORT, () => {
-//     console.log(`Server running on http://localhost:${PORT}`);
-// });
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const axios = require("axios");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
+const youtubeRoutes = require("./routes/youtubeRoutes");
+const pollRoutes = require("./routes/pollRoutes");
+const { schedulePolls } = require("./controllers/pollController");
+const cron = require("node-cron");
+const { deleteOldPolls } = require("./controllers/pollController");
+const newsRoutes = require("./routes/geoRoutes");
 
 dotenv.config();
 
@@ -62,13 +17,19 @@ const app = express();
 app.use(express.json());
 
 // ✅ Proper CORS Configuration
-app.use(
-  cors({
-    origin: "https://newsmania-newsportal.vercel.app", // Allow only your frontend
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: "http://localhost:5173", // Allow frontend origin
+  methods: ["GET", "POST", "PATCH", "DELETE"], // ✅ Add PATCH here
+  allowedHeaders: ["Content-Type", "Authorization"], // Allow necessary headers
+}));
+app.get('/api/ip-location', async (req, res) => {
+  try {
+      const response = await axios.get('https://ipapi.co/json/');
+      res.json(response.data);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch IP location' });
+  }
+});
 
 // ✅ Fetch News from NewsAPI
 app.get("/api/news", async (req, res) => {
@@ -105,4 +66,15 @@ mongoose
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
 // ✅ Authentication Routes
-app.use("/api/auth", authRoutes);
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/bookmarks', require('./routes/bookmarkRoutes'));
+app.use("/api/youtube", youtubeRoutes);
+app.use("/api/polls", pollRoutes);
+app.use("/api/news", newsRoutes);
+// ✅ Schedule Poll Generation (Every 30 minutes)
+schedulePolls();
+
+// ✅ Auto-Delete Polls Older Than 24 Hours (Every 24 hours)
+cron.schedule("0 0 * * *", async () => {
+  await deleteOldPolls();
+});
