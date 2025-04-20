@@ -76,8 +76,8 @@ const Categories = () => {
   }, []);
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
+    <div className="p-6 bg-gray-900 min-h-screen">
+      <h1 className="text-4xl font-bold mb-6 text-center text-white">
         <FaNewspaper className="inline-block text-red-600 mr-2 animate-bounce" />{" "}
         News Categories
       </h1>

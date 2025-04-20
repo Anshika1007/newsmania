@@ -72,7 +72,7 @@ const Home = () => {
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
+                <h1 className="text-4xl font-bold mb-6 text-center text-white">
                     <FaNewspaper className="inline-block text-red-600 mr-2 animate-bounce" /> Latest News
                 </h1>
             </div>

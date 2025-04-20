@@ -53,7 +53,7 @@ const GeoNews = () => {
   return (
     <div className="mt-6 px-4">
       {/* Country Selector Buttons */}
-      <h2 className="text-2xl font-bold text-center text-gray-900">
+      <h2 className="text-2xl font-bold text-center text-white">
         🌍 Select Country
       </h2>
       <div className="flex justify-center flex-wrap gap-4 mt-4">
@@ -78,7 +78,7 @@ const GeoNews = () => {
 
       {/* News Heading */}
       <h1 className="text-3xl font-bold mt-6 text-center text-red-600">
-  <FaNewspaper className="inline-block text-gray-800 mr-2 animate-bounce" /> 
+  <FaNewspaper className="inline-block text-white mr-2 animate-bounce" /> 
   Top News from {country.toUpperCase()}
 </h1>
 
